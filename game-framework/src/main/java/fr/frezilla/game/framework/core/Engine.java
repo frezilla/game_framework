@@ -5,12 +5,14 @@ import lombok.NonNull;
 
 public abstract class Engine {
     
-    final Game game;
+    private final Game game;
     private final FifoQueue<EngineEvent> eventsQueue;
+    protected final boolean passiveMode;
     
-    public Engine(Game g) {
+    public Engine(@NonNull Game g, @NonNull Boolean p) {
         eventsQueue = FifoQueue.newInstance();
         game = g;
+        passiveMode = p;
     }
     
     public abstract void frame();
