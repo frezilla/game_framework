@@ -1,12 +1,15 @@
 package fr.frezilla.game.framework.engines;
 
+import fr.frezilla.game.framework.engines.sound.SoundEngine;
+import fr.frezilla.game.framework.engines.graphic.GraphicEngine;
+import fr.frezilla.game.framework.engines.game.GameEngine;
 import fr.frezilla.game.framework.core.Engine;
 
 public enum Engines {
     Game("game", GameEngine.class),
-    Graphics("graphics", GameEngine.class),
+    Graphics("graphics", GraphicEngine.class),
     Network("network", GameEngine.class),
-    Sound("sound", GameEngine.class);
+    Sound("sound", SoundEngine.class);
     
     private final String name;
     private final Class<? extends Engine> engineClass;

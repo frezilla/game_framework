@@ -1,4 +1,4 @@
-package fr.frezilla.game.framework.engines;
+package fr.frezilla.game.framework.engines.game;
 
 import fr.frezilla.game.framework.core.Engine;
 import fr.frezilla.game.framework.core.EngineEvent;
@@ -11,8 +11,13 @@ public class GameEngine extends Engine {
     }
 
     @Override
+    public void end() {
+        System.out.println("GameEngine.end");
+    }
+
+    @Override
     public void frame() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("GameEngine.frame");
     }
 
     @Override

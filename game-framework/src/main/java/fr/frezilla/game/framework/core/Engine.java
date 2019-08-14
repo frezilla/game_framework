@@ -15,6 +15,8 @@ public abstract class Engine {
         passiveMode = p;
     }
     
+    public abstract void end();
+    
     public abstract void frame();
     
     protected abstract void processEvent(EngineEvent e);
@@ -34,7 +36,7 @@ public abstract class Engine {
         game.dispatchMessage(engineName, evt);
     }
     
-    protected final void sendStopGameRequest() {
+    public final void sendStopGameRequest() {
         game.stop();
     }
 }
