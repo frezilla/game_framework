@@ -3,40 +3,72 @@ package fr.frezilla.game.framework.engines.sound;
 import fr.frezilla.game.framework.core.Engine;
 import fr.frezilla.game.framework.core.EngineEvent;
 import fr.frezilla.game.framework.core.Game;
-import java.io.InputStream;
+import fr.frezilla.game.framework.ds.FifoQueue;
+import fr.frezilla.game.framework.utils.XmlUtils;
+import java.io.IOException;
+import javazoom.jl.decoder.JavaLayerException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 public class SoundEngine extends Engine {
-    
-    private SoundsMap soundsMap;
-    
+
+    private static final String SOUNDS_FILE = "sounds/sounds.xml";
+
+    private final SoundsMap soundsMap;
+    private final FifoQueue<Sound> soundsToPlay;
+
     public SoundEngine(Game g, Boolean p) {
         super(g, p);
+
+        soundsMap = new SoundsMap();
+        soundsToPlay = FifoQueue.newInstance();
+
+        loadSounds();
     }
-    
+
     @Override
-    public void end() {
+    protected void beforeLoop() {
         System.out.println("SoundEngine.end");
         soundsMap.getSoundsNames().forEach((soundName) -> {
             Sound sound = soundsMap.getSound(soundName);
             if (sound != null) {
-                sound.interrupt();
+                sound.stop();
             }
         });
     }
 
     @Override
-    public void frame() {
+    protected void frame() {
         System.out.println("SoundEngine.frame");
+        while (!soundsToPlay.isEmpty()) {
+            soundsToPlay.pop().play();
+        }
     }
-    
-    public void loadSounds(InputStream...is) {
-        
-        
+
+    private void loadSounds() {
+        Document doc = XmlUtils.parse(getClass().getClassLoader().getResourceAsStream(SOUNDS_FILE));
+        NodeList nodeList = doc.getElementsByTagName("sound");
+
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            Node node = nodeList.item(i);
+            if (Node.ELEMENT_NODE == node.getNodeType()) {
+                try {
+                    Element element = (Element) node;
+                    String soundName = element.getElementsByTagName("name").item(0).getTextContent();
+                    String soundFile = element.getElementsByTagName("file").item(0).getTextContent();
+                    soundsMap.putSound(soundName, Sound.of(getClass().getClassLoader().getResourceAsStream(soundFile)));
+                } catch (JavaLayerException | IOException e) {
+                    e.printStackTrace(System.err);
+                }
+            }
+        }
     }
-    
+
     @Override
     protected void processEvent(EngineEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        soundsToPlay.push(soundsMap.getSound("waves"));
     }
-    
+
 }

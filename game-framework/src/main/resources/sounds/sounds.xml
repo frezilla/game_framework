@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sounds>
+    <sound>
+        <name>waves</name>
+        <file>sounds/waves.mp3</file>
+    </sound>
+</sounds>    

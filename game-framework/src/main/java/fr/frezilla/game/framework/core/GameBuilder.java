@@ -1,43 +1,51 @@
 package fr.frezilla.game.framework.core;
 
-import fr.frezilla.game.framework.engines.Engines;
+import fr.frezilla.game.framework.utils.XmlUtils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang3.tuple.Pair;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 @NoArgsConstructor
 public class GameBuilder {
     
     public static Game build() {
-        Engines[] engines = Engines.values();
-        int nbEngines = engines.length;
-        Game g;
+        Game game;
+        
+        Document gameXmlDocument = XmlUtils.parse(GameBuilder.class.getClassLoader().getResourceAsStream(GameProperties.GAME_XML_PATH));
+        NodeList nEngineList = gameXmlDocument.getElementsByTagName("engine");
+        int nbEngines = nEngineList.getLength();
         
         if (nbEngines == 0) {
-            g = null;
+            game = null;
         } else {
-            g = new Game();
             try {
+                game = new Game();
                 for (int i = 0; i < nbEngines; i++) {
-                    if (engines[i] != null) {
-                        Engines e = engines[i];
-                        Class<? extends Engine> engineClass = e.getEngineClass();
-                        Constructor<? extends Engine> constructor = engineClass.getConstructor(Game.class, Boolean.class);
-                        g.addEngine(
-                                Pair.of(
-                                        e.getName(), 
-                                        constructor.newInstance(g, false)
-                                )
-                        );
+                    Node node = nEngineList.item(i);
+                    if (Node.ELEMENT_NODE == node.getNodeType()) {
+                        Element element = (Element) node;
+                        String eName = element.getAttribute("name");
+                        String eClassName = element.getAttribute("class");
+
+                        Class eClass = Class.forName(eClassName);
+                        if (Engine.class.isAssignableFrom(eClass)) {
+                            Constructor<? extends Engine> constructor = eClass.getConstructor(Game.class, Boolean.class);
+                            Engine eInstance = constructor.newInstance(game, false);
+                            game.addEngine(eName, eInstance);
+                        }
                     }
                 }
-            } catch (IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
-                g = null;
+            } catch (ClassNotFoundException | IllegalAccessException | InstantiationException | InvocationTargetException | NoSuchMethodException e) {
+                e.printStackTrace(System.err);
+                game = null;
             }
         }
         
-        return g;
+        return game;
     }
     
 }

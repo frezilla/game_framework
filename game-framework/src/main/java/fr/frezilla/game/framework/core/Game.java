@@ -2,69 +2,87 @@ package fr.frezilla.game.framework.core;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 import lombok.NonNull;
-import org.apache.commons.lang3.tuple.Pair;
 
+/**
+ * Classe du jeu.
+ */
 public final class Game {
 
     static int FRAMES_PER_SECOND = 60;
 
+    private final Map<String, Engine> enginesMap;
     private final Lock lock;
     private final long loopDuration;
-    private final Map<String, Engine> modulesMap;
     private boolean stillRunning;
 
     /**
-     * Constructeur du jeu
+     * Constructeur.
      */
     Game() {
+        enginesMap = new HashMap<>();
         lock = new ReentrantLock();
         loopDuration = (long) 1000000000 / FRAMES_PER_SECOND;
-        modulesMap = new HashMap<>();
         stillRunning = true;
     }
 
     /**
-     * Ajoute un moteur nommé au jeu.
+     * Ajoute un moteur identifié par un nom au jeu.
      * <p>
      * Le nom du moteur doit être unique. Si un moteur existe déjà avec le même
      * nom, le moteur sera remplacé par celui passé en paramètre.
      *
-     * @param namedEngine Moteur nommé; la clé est le nom du moteur, la valeur
-     * est le moteur à proprement parler.
+     * @param name Nom du moteur
+     * @param engine Moteur
+     * @see Engine
      */
-    void addEngine(@NonNull Pair<String, Engine> namedEngine) {
-        modulesMap.put(
-                Objects.requireNonNull(namedEngine.getKey()),
-                Objects.requireNonNull(namedEngine.getValue())
-        );
+    void addEngine(@NonNull String name, @NonNull Engine engine) {
+        enginesMap.put(name, engine);
     }
 
     /**
-     * Route un évènement moteur vers un moteur.
+     * Diffuse un évènement vers un moteur identifié par son nom.
+     * <p>
+     * Si le nom du moteur est inconnu du jeu, l'appel à cette méthode est sans
+     * effet.
      *
      * @param engineName Nom du moteur destinataire de l'évènement
      * @param evt Evènement
      */
     void dispatchMessage(@NonNull String engineName, @NonNull EngineEvent evt) {
-        if (modulesMap.containsKey(engineName)) {
-            modulesMap.get(engineName).pushEvent(evt);
+        if (enginesMap.containsKey(engineName)) {
+            enginesMap.get(engineName).pushEvent(evt);
         }
+    }
+    
+    /**
+     * Exécute une action pour chacun des modules déclarés dans le jeu.
+     * 
+     * @param action Action à exécuter
+     */
+    private void executeActionOnModules(Consumer<? super Engine> action) {
+        enginesMap.values().forEach(action);
     }
 
     /**
-     * Retourne les noms des moteurs déclarés dans le jeu.
+     * Retourne la liste des noms des moteurs déclarés dans le jeu.
      *
      * @return Ensemble des noms des moteurs
      */
     public Set<String> getEnginesNames() {
-        return modulesMap.keySet();
+        return enginesMap.keySet();
     }
 
+    /**
+     * Met le jeu en "pause" pour respecter les contraintes liées au framerate
+     * définies via la variable {@link Game#FRAMES_PER_SECOND}.
+     * 
+     * @param startLoopTime Instant de départ du traitement de la boucle
+     */
     private void pause(long startLoopTime) {
         long sleepTime = loopDuration - (System.nanoTime() - startLoopTime);
         if (sleepTime > 0) {
@@ -77,16 +95,37 @@ public final class Game {
     }
 
     /**
-     * Exécute le jeu.
+     * Lance le jeu.
+     * <p>
+     * Le principe de fonctionnement de cette méthode est :
+     * <p>
+     * <code>
+     * * Ouvertures des moteurs<br>
+     * * Traitement antérieurs à la boucle du jeu<br>
+     * * Boucle du jeu {<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;- Traitement des évènements reçus<br>
+     * &nbsp;&nbsp;&nbsp;&nbsp;- Traitement<br>
+     * * }<br>
+     * * Traitement postérieurs à la boucle du jeu<br>
+     * * Fermeture des moteurs
      */
-    public void run() {
+    public final void run() {
         boolean currentStillRunning = stillRunning;
+        
+        // Initialisation des moteurs
+        executeActionOnModules(Engine::init);
 
+        // Traitements antérieurs à la boucle du jeu
+        executeActionOnModules(Engine::beforeLoop);
+        
         while (currentStillRunning) {
             long startLoopTime = System.nanoTime();
-            modulesMap.values().forEach((e) -> {
-                e.frame();
-            });
+            
+            // Traitement des évènements
+            executeActionOnModules(Engine::processEvents);
+            
+            // Traitement 
+            executeActionOnModules(Engine::frame);
 
             lock.lock();
             try {
@@ -99,9 +138,11 @@ public final class Game {
             }
         }
 
-        modulesMap.values().forEach((e) -> {
-            e.end();
-        });
+        // Traitements postérieurs à la boucle du jeu
+        executeActionOnModules(Engine::afterLoop);
+        
+        // Fermeture des moteurs
+        executeActionOnModules(Engine::destroy);
     }
 
     /**

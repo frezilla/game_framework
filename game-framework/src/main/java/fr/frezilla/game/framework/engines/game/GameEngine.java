@@ -11,18 +11,13 @@ public class GameEngine extends Engine {
     }
 
     @Override
-    public void end() {
-        System.out.println("GameEngine.end");
-    }
-
-    @Override
-    public void frame() {
-        System.out.println("GameEngine.frame");
+    protected void frame() {
+        System.out.println("GameEngine.frame()");
     }
 
     @Override
     protected void processEvent(EngineEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("GameEngine.processEvent()");
     }
-    
+
 }
