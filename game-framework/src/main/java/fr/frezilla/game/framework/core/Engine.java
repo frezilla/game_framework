@@ -31,13 +31,13 @@ public abstract class Engine {
     }
 
     /**
-     * Exécute le traitement postérieur à la boucle du jeu.
+     * Exécute le traitement suivant la boucle du jeu.
      */
     protected void afterLoop() {
     }
 
     /**
-     * Exécute le traitement antérieur à la boule du jeu.
+     * Exécute le traitement préliminaire à la boucle du jeu.
      */
     protected void beforeLoop() {
     }
@@ -78,6 +78,8 @@ public abstract class Engine {
 
     /**
      * Traite un évènement transmis au moteur.
+     *
+     * @param e Evènement
      */
     protected abstract void processEvent(EngineEvent e);
 
