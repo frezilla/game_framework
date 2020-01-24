@@ -1,10 +1,10 @@
 package fr.frezilla.game.framework.engines.game;
 
-import fr.frezilla.game.framework.core.Engine;
 import fr.frezilla.game.framework.core.EngineEvent;
 import fr.frezilla.game.framework.core.Game;
+import fr.frezilla.game.framework.core.IEngine;
 
-public class GameEngine extends Engine {
+public class GameEngine implements IEngine {
 
     public GameEngine(Game g, Boolean p) {
         super(g, p);

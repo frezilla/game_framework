@@ -11,7 +11,7 @@ import lombok.NonNull;
  * {@link Engine#destroy()} et {@link Engine#init()} peuvent être redéfinies
  * dans les classes filles si nécessaires.
  */
-public abstract class Engine {
+abstract class Engine {
 
     private final Game game;
     private final FifoQueue<EngineEvent> eventsQueue;

@@ -1,5 +1,8 @@
 package fr.frezilla.game.framework.core;
 
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -13,12 +16,21 @@ import lombok.NonNull;
  */
 public final class Game {
 
-    static int FRAMES_PER_SECOND = 60;
+    static final int FRAMES_PER_SECOND;
 
     private final Map<String, Engine> enginesMap;
     private final Lock lock;
     private final long loopDuration;
     private boolean stillRunning;
+    
+    static {
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        GraphicsDevice gd = ge.getDefaultScreenDevice();
+        DisplayMode dm = gd.getDisplayMode();
+        
+        int refreshRate = dm.getRefreshRate();
+        FRAMES_PER_SECOND = (refreshRate == DisplayMode.REFRESH_RATE_UNKNOWN) ? 60 : refreshRate;
+    }
 
     /**
      * Constructeur.
