@@ -17,10 +17,10 @@ import lombok.NonNull;
 public final class Game {
 
     static final int FRAMES_PER_SECOND;
+    private static final long LOOP_DURATION;
 
     private final Map<String, Engine> enginesMap;
     private final Lock lock;
-    private final long loopDuration;
     private boolean stillRunning;
     
     static {
@@ -30,6 +30,7 @@ public final class Game {
         
         int refreshRate = dm.getRefreshRate();
         FRAMES_PER_SECOND = (refreshRate == DisplayMode.REFRESH_RATE_UNKNOWN) ? 60 : refreshRate;
+        LOOP_DURATION = (long) 1000000000 / FRAMES_PER_SECOND;
     }
 
     /**
@@ -38,7 +39,6 @@ public final class Game {
     Game() {
         enginesMap = new HashMap<>();
         lock = new ReentrantLock();
-        loopDuration = (long) 1000000000 / FRAMES_PER_SECOND;
         stillRunning = true;
     }
 
@@ -96,7 +96,7 @@ public final class Game {
      * @param startLoopTime Instant de départ du traitement de la boucle
      */
     private void pause(long startLoopTime) {
-        long sleepTime = loopDuration - (System.nanoTime() - startLoopTime);
+        long sleepTime = LOOP_DURATION - (System.nanoTime() - startLoopTime);
         if (sleepTime > 0) {
             try {
                 Thread.sleep(sleepTime / 999999, (int) sleepTime % 999999);
@@ -120,6 +120,7 @@ public final class Game {
      * * }<br>
      * * Traitement postérieurs à la boucle du jeu<br>
      * * Fermeture des moteurs
+     * </code>
      */
     public final void run() {
         boolean currentStillRunning = stillRunning;
@@ -130,8 +131,14 @@ public final class Game {
         // Traitements antérieurs à la boucle du jeu
         executeActionOnModules(Engine::beforeLoop);
         
+        long startLoopTime = System.nanoTime();
         while (currentStillRunning) {
-            long startLoopTime = System.nanoTime();
+            long nowTime = System.nanoTime();
+            if ((nowTime - startLoopTime) < LOOP_DURATION) {
+                continue;
+            }
+            startLoopTime = nowTime;
+            
             
             // Traitement des évènements
             executeActionOnModules(Engine::processEvents);
