@@ -11,36 +11,32 @@ import lombok.NonNull;
  * {@link Engine#destroy()} et {@link Engine#init()} peuvent être redéfinies
  * dans les classes filles si nécessaires.
  */
-abstract class Engine {
+public abstract class Engine {
 
-    private final Game game;
+    private Game game;
     private final FifoQueue<EngineEvent> eventsQueue;
     protected final boolean passiveMode;
 
     /**
      * Constructeur.
      *
-     * @param gameRef Référence vers le jeu
      * @param passiveMode Mode passif activé ou pas
      * @see Game
      */
-    protected Engine(@NonNull Game gameRef, @NonNull Boolean passiveMode) {
+    protected Engine(@NonNull Boolean passiveMode) {
         this.eventsQueue = FifoQueue.newInstance();
-        this.game = gameRef;
         this.passiveMode = passiveMode;
     }
 
     /**
      * Exécute le traitement suivant la boucle du jeu.
      */
-    protected void afterLoop() {
-    }
+    protected abstract void afterLoop();
 
     /**
      * Exécute le traitement préliminaire à la boucle du jeu.
      */
-    protected void beforeLoop() {
-    }
+    protected abstract void beforeLoop();
 
     /**
      * Détruit le moteur.
@@ -48,8 +44,7 @@ abstract class Engine {
      * Cette méthode devrait être utilisée pour libérer les ressources utilisées
      * par le moteur.
      */
-    protected void destroy() {
-    }
+    protected abstract void destroy();
 
     /**
      * Exécute le traitement du moteur
@@ -88,7 +83,7 @@ abstract class Engine {
      *
      * @param eEvent Evènement
      */
-    void pushEvent(@NonNull EngineEvent eEvent) {
+    final void pushEvent(@NonNull EngineEvent eEvent) {
         eventsQueue.push(eEvent);
     }
 
@@ -111,5 +106,14 @@ abstract class Engine {
      */
     public final void sendStopGameRequest() {
         game.stop();
+    }
+    
+    /**
+     * Lie le jeu au moteur.
+     * 
+     * @param game 
+     */
+    final void setGame(@NonNull Game game) {
+        this.game = game;
     }
 }
