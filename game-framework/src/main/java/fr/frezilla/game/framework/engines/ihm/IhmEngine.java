@@ -1,10 +1,10 @@
 package fr.frezilla.game.framework.engines.ihm;
 
-import fr.frezilla.game.framework.core.Engine;
 import fr.frezilla.game.framework.core.EngineEvent;
 import fr.frezilla.game.framework.core.Game;
+import fr.frezilla.game.framework.engines.GenericEngine;
 
-public class IhmEngine extends Engine {
+public class IhmEngine extends GenericEngine {
     
     public IhmEngine(Game g, Boolean p) {
         super(g, p);

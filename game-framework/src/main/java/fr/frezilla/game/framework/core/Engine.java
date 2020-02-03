@@ -109,7 +109,11 @@ public abstract class Engine {
     }
     
     /**
-     * Lie le jeu au moteur.
+     * Permet de créer un lien entre le moteur et le jeu.
+     * <p>
+     * Cette méthode devrait être seulement invoqué par la GameBuilder (les 
+     * instances filles de Engine ne devrait pas pouvoir disposer d'un accès 
+     * direct à l'instance du jeu)
      * 
      * @param game 
      */
