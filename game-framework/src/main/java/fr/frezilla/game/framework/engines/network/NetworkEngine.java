@@ -1,13 +1,12 @@
 package fr.frezilla.game.framework.engines.network;
 
-import fr.frezilla.game.framework.core.Engine;
 import fr.frezilla.game.framework.core.EngineEvent;
-import fr.frezilla.game.framework.core.Game;
+import fr.frezilla.game.framework.engines.GenericEngine;
 
-public class NetworkEngine extends Engine {
+public class NetworkEngine extends GenericEngine {
 
-    public NetworkEngine(Game g, Boolean p) {
-        super(g, p);
+    public NetworkEngine(Boolean p) {
+        super(p);
     }
 
     @Override

@@ -1,9 +1,8 @@
 package fr.frezilla.game.framework.engines.sound;
 
-import fr.frezilla.game.framework.core.Engine;
 import fr.frezilla.game.framework.core.EngineEvent;
-import fr.frezilla.game.framework.core.Game;
 import fr.frezilla.game.framework.ds.FifoQueue;
+import fr.frezilla.game.framework.engines.GenericEngine;
 import fr.frezilla.game.framework.utils.XmlUtils;
 import java.io.IOException;
 import javazoom.jl.decoder.JavaLayerException;
@@ -12,15 +11,15 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-public class SoundEngine extends Engine {
+public class SoundEngine extends GenericEngine {
 
     private static final String SOUNDS_FILE = "sounds/sounds.xml";
 
     private final SoundsMap soundsMap;
     private final FifoQueue<Sound> soundsToPlay;
 
-    public SoundEngine(Game g, Boolean p) {
-        super(g, p);
+    public SoundEngine(Boolean p) {
+        super(p);
 
         soundsMap = new SoundsMap();
         soundsToPlay = FifoQueue.newInstance();
