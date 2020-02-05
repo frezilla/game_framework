@@ -15,17 +15,17 @@ public abstract class GenericEngine extends Engine {
     
     @Override
     protected void afterLoop() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("afterLoop");
     }
 
     @Override
     protected void beforeLoop() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("beforeLoop");
     }
 
     @Override
     protected void destroy() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("destroy");
     }
     
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <game>
     <engines>
-        <engine name="game" class="fr.frezilla.game.framework.engines.game.GameEngine.GameEngine" />
+        <engine name="game" class="fr.frezilla.game.framework.engines.game.GameEngine" />
         <engine name="ihm" class="fr.frezilla.game.framework.engines.ihm.IhmEngine" />
         <engine name="network" class="fr.frezilla.game.framework.engines.network.NetworkEngine" />
         <engine name="sound" class="fr.frezilla.game.framework.engines.sound.SoundEngine" />
