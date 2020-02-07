@@ -36,7 +36,7 @@ public class GameBuilder {
                         String eName = element.getAttribute("name");
                         String eClassName = element.getAttribute("class");
                         
-                        LOGGER.trace("Instanciation du moteur <" + eName + "> - " + eClassName);
+                        LOGGER.trace("Instanciation du moteur <{}> - {}", new Object[] {eName, eClassName});
 
                         Class eClass = Class.forName(eClassName);
                         if (Engine.class.isAssignableFrom(eClass)) {
