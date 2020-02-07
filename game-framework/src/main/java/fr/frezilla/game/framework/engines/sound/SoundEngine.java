@@ -29,7 +29,6 @@ public class SoundEngine extends GenericEngine {
 
     @Override
     protected void beforeLoop() {
-        System.out.println("SoundEngine.end");
         soundsMap.getSoundsNames().forEach((soundName) -> {
             Sound sound = soundsMap.getSound(soundName);
             if (sound != null) {
@@ -40,7 +39,6 @@ public class SoundEngine extends GenericEngine {
 
     @Override
     protected void frame() {
-        System.out.println("SoundEngine.frame");
         while (!soundsToPlay.isEmpty()) {
             soundsToPlay.pop().play();
         }

@@ -1,21 +1,37 @@
 package fr.frezilla.game.framework.engines.ihm;
 
-import fr.frezilla.game.framework.core.EngineEvent;
 import fr.frezilla.game.framework.engines.GenericEngine;
+import java.awt.Dimension;
+import javax.swing.JFrame;
 
-public class IhmEngine extends GenericEngine {
-    
+public final class IhmEngine extends GenericEngine {
+
+    private JFrame jFrame;
+
     public IhmEngine(Boolean p) {
         super(p);
     }
 
     @Override
-    protected void frame() {
-        System.out.println("GraphicEngine.frame()");
+    protected void afterLoop() {
+        jFrame.setVisible(false);
     }
 
     @Override
-    protected void processEvent(EngineEvent e) {
-        System.out.println("GraphicEngine.processEvent()");
+    protected void beforeLoop() {
+        jFrame.setVisible(true);
+    }
+
+    @Override
+    protected void destroy() {
+        jFrame.dispose();
+    }
+
+    @Override
+    protected void init() {
+        jFrame = new JFrame();
+        jFrame.setPreferredSize(new Dimension(640, 480));
+        jFrame.getContentPane().addKeyListener(IhmKeyListener.create(this));
+        jFrame.addWindowListener(IhmWindowListener.create(this));
     }
 }

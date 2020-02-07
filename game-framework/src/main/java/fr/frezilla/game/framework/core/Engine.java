@@ -57,8 +57,7 @@ public abstract class Engine {
      * Cette méthode devrait être utilisée pour accéder aux ressources
      * nécessaires au fonctionnement du moteur.
      */
-    protected void init() {
-    }
+    protected abstract void init();
 
     /**
      * Lance le traitement des tous les évènements présents dans la pile des
@@ -88,7 +87,7 @@ public abstract class Engine {
     }
 
     /**
-     * Emet un évènement vers un moteur identifié par son nom.
+     * Transmet un évènement vers un moteur identifié par son nom.
      * <p>
      * La liste des moteurs référencés dans l'ojet Game est accessible via la
      * méthode {@link Game#getEnginesNames}.
@@ -99,6 +98,15 @@ public abstract class Engine {
      */
     protected final void sendEventTo(@NonNull String eName, @NonNull EngineEvent eEvent) {
         game.dispatchMessage(eName, eEvent);
+    }
+    
+    /**
+     * Transmet un évènement vers tous les moteurs connus du jeu.
+     * 
+     * @param eEvent Evènement
+     */
+    protected final void sendEventToAll(@NonNull EngineEvent eEvent) {
+        game.getEnginesNames().forEach((eName) -> {sendEventTo(eName, eEvent); });
     }
 
     /**
