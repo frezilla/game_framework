@@ -4,7 +4,7 @@ import fr.frezilla.game.framework.engines.GenericEngine;
 
 public class NetworkEngine extends GenericEngine {
 
-    public NetworkEngine(Boolean p) {
-        super(p);
+    public NetworkEngine() {
+        super();
     }
 }

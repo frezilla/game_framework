@@ -8,8 +8,8 @@ public final class IhmEngine extends GenericEngine {
 
     private JFrame jFrame;
 
-    public IhmEngine(Boolean p) {
-        super(p);
+    public IhmEngine() {
+        super();
     }
 
     @Override

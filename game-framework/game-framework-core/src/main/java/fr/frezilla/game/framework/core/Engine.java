@@ -15,17 +15,14 @@ public abstract class Engine {
 
     private Game game;
     private final FifoQueue<EngineEvent> eventsQueue;
-    protected final boolean passiveMode;
 
     /**
      * Constructeur.
      *
-     * @param passiveMode Mode passif activé ou pas
      * @see Game
      */
-    protected Engine(@NonNull Boolean passiveMode) {
+    protected Engine() {
         this.eventsQueue = FifoQueue.newInstance();
-        this.passiveMode = passiveMode;
     }
 
     /**

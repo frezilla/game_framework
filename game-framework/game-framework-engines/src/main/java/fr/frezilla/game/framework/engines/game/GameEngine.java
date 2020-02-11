@@ -4,7 +4,7 @@ import fr.frezilla.game.framework.engines.GenericEngine;
 
 public class GameEngine extends GenericEngine {
 
-    public GameEngine(Boolean p) {
-        super(p);
+    public GameEngine() {
+        super();
     }
 }

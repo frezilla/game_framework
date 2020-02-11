@@ -18,8 +18,8 @@ public class SoundEngine extends GenericEngine {
     private final SoundsMap soundsMap;
     private final FifoQueue<Sound> soundsToPlay;
 
-    public SoundEngine(Boolean p) {
-        super(p);
+    public SoundEngine() {
+        super();
 
         soundsMap = new SoundsMap();
         soundsToPlay = FifoQueue.newInstance();
